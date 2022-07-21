@@ -1,6 +1,7 @@
 lockfileVersion: 5.4
 
 specifiers:
+  '@metamask/detect-provider': ^1.2.0
   '@testing-library/jest-dom': ^5.16.4
   '@testing-library/react': ^13.3.0
   autoprefixer: ^10.4.7
@@ -23,6 +24,7 @@ specifiers:
   tailwindcss: ^3.1.6
 
 dependencies:
+  '@metamask/detect-provider': 1.2.0
   ethers: 5.6.9
   next: 12.2.2_pa3haiehbu3xg5t3tpqo552bfa
   react: 18.2.0
@@ -1073,6 +1075,11 @@ packages:
       '@jridgewell/sourcemap-codec': 1.4.14
     dev: true
     optional: true
+
+  /@metamask/detect-provider/1.2.0:
+    resolution: {integrity: sha512-ocA76vt+8D0thgXZ7LxFPyqw3H7988qblgzddTDA6B8a/yU0uKV42QR/DhA+Jh11rJjxW0jKvwb5htA6krNZDQ==}
+    engines: {node: '>= 10'}
+    dev: false
 
   /@next/env/12.2.2:
     resolution: {integrity: sha512-BqDwE4gDl1F608TpnNxZqrCn6g48MBjvmWFEmeX5wEXDXh3IkAOw6ASKUgjT8H4OUePYFqghDFUss5ZhnbOUjw==}

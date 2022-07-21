@@ -1,4 +1,5 @@
 import Head from "next/head"
+import { WalletButton } from "@/components/Wallet"
 
 export default function Home() {
   return (
@@ -12,6 +13,7 @@ export default function Home() {
       <main>
         hello
         <div className="">test</div>
+        <WalletButton />
       </main>
     </div>
   )
