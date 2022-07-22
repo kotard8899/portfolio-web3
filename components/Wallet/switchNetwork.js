@@ -1,6 +1,6 @@
 import chainList from "./chainList"
 
-const supportChain = process.env.NEXT_PUBLIC_SUPPORT_CHAIN
+const supportChain = Number(process.env.NEXT_PUBLIC_SUPPORT_CHAIN)
 
 async function switchNetwork(ethereum, prevChain, chain = supportChain) {
   // 如果用戶拒絕換鏈，則回傳原本的鏈

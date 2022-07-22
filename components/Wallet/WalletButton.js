@@ -14,7 +14,7 @@ const btnClassNames = [
   "hover:bg-lightBack",
 ]
 
-const supportChain = process.env.NEXT_PUBLIC_SUPPORT_CHAIN
+const supportChain = Number(process.env.NEXT_PUBLIC_SUPPORT_CHAIN)
 
 const wcProvider = new WalletConnectProvider({
   rpc: {
@@ -190,6 +190,7 @@ const WalletButton = () => {
 
   return (
     <>
+      {console.log(supportChain)}
       {account ? (
         <button
           className={`inline-block py-4 px-8 text-mon font-bold ${styles.blurBtn}`}
