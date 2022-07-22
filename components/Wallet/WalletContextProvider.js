@@ -1,8 +1,7 @@
-import { useEffect, useReducer } from "react"
+import { useReducer } from "react"
 import WalletReducer from "./WalletReducer"
 import WalletInitialState from "./WalletInitialState"
-import WalletStateContext from "./WalletStateContext"
-import WalletDispatchContext from "./WalletDispatchContext"
+import { WalletStateContext, WalletDispatchContext } from "./WalletContext"
 
 const WalletContextProdiver = ({ children }) => {
   const [state, dispatch] = useReducer(WalletReducer, WalletInitialState)

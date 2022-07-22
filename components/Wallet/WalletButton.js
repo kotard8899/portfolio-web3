@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react"
 import detectEthereumProvider from "@metamask/detect-provider"
-import useWallet from "./useWallet"
-import useDispatchWallet from "./useDispatchWallet"
+import WalletConnectProvider from "@walletconnect/web3-provider"
+import { useWallet, useDispatchWallet } from "./useWallet"
 import styles from "./Wallet.module.css"
-import { providers } from "ethers"
 import switchNetwork from "./switchNetwork"
+import { providers } from "ethers"
 
 const btnClassNames = [
   "cursor-pointer",
@@ -13,6 +13,56 @@ const btnClassNames = [
   "transition duration-200",
   "hover:bg-lightBack",
 ]
+
+const supportChain = process.env.NEXT_PUBLIC_SUPPORT_CHAIN
+
+const wcProvider = new WalletConnectProvider({
+  rpc: {
+    1: "https://mainnet.infura.io/v3/6c145e774d8640e288f94d7263558483",
+    4: "https://rinkeby.infura.io/v3/6c145e774d8640e288f94d7263558483",
+  },
+})
+
+const DiconnectItem = () => {
+  const hasWalletConnect = !!localStorage.getItem("walletconnect")
+  if (!hasWalletConnect) return null
+
+  const handleWcDisconnect = () => {
+    wcProvider.disconnect()
+    window.location.reload(false)
+  }
+
+  return (
+    <div
+      className={`${btnClassNames.join(
+        " ",
+      )} flex justify-between items-center space-x-2`}
+      onClick={handleWcDisconnect}
+    >
+      <span className="ml-2">Disconnect WalletConnect</span>
+      {/* <SVG className="inline-block" src="images/walletConnect.svg" width={32} height={32} /> */}
+    </div>
+  )
+}
+
+const WalletListItem = ({ walletName, onClick }) => {
+  let walletText
+  if (walletName === "metamask") walletText = "MetaMask"
+  else if (walletName === "walletConnect") walletText = "Wallet Connect"
+  else if (walletName === "qubic") walletText = "Qubic"
+
+  return (
+    <div
+      className={`${btnClassNames.join(
+        " ",
+      )} flex justify-between items-center space-x-2`}
+      onClick={onClick}
+    >
+      <span className="w-44 ml-2">{walletText}</span>
+      {/* <SVG className="inline-block" src={`images/${walletName}.svg`} width={32} height={32} /> */}
+    </div>
+  )
+}
 
 const WalletList = ({ setIsModal, handleConnect, isMetaMaskInstalled }) => {
   return (
@@ -35,16 +85,16 @@ const WalletList = ({ setIsModal, handleConnect, isMetaMaskInstalled }) => {
               {/* <SVG className="inline-block" src="images/metamask.svg" width={32} height={32} /> */}
             </a>
           ) : (
-            <div
-              className={`${btnClassNames.join(
-                " ",
-              )} flex justify-between items-center space-x-2`}
-              onClick={handleConnect}
-            >
-              <span className="w-44 ml-2">MetaMask</span>
-              {/* <SVG className="inline-block" src={`images/${walletName}.svg`} width={32} height={32} /> */}
-            </div>
+            <WalletListItem
+              walletName="metamask"
+              onClick={() => handleConnect("metamask")}
+            />
           )}
+          <WalletListItem
+            walletName="walletConnect"
+            onClick={() => handleConnect("walletConnect")}
+          />
+          <DiconnectItem />
         </div>
         <footer>
           <div
@@ -60,7 +110,7 @@ const WalletList = ({ setIsModal, handleConnect, isMetaMaskInstalled }) => {
 }
 
 const WalletButton = () => {
-  const { account, provider, signer, chainId } = useWallet()
+  const { account, provider, chainId } = useWallet()
   const dispatch = useDispatchWallet()
   const [isMetaMaskInstalled, setIsMetaMaskInstalled] = useState(true)
   const [isModal, setIsModal] = useState(false)
@@ -79,7 +129,7 @@ const WalletButton = () => {
             provider: etherProvider,
             account: account || null,
             chainId:
-              chainId !== 4 && account
+              chainId !== supportChain && account
                 ? await switchNetwork(provider, chainId)
                 : chainId,
             signer,
@@ -108,24 +158,31 @@ const WalletButton = () => {
     }
   }, [dispatch, provider])
 
-  const handleDisconnect = () => dispatch({ type: "DISCONNECT" })
-
-  const handleConnect = async () => {
+  const handleConnect = async (walletName) => {
+    let _account
+    let _chainId = supportChain
     try {
-      dispatch({
-        type: "UPDATE_ACCOUNT",
-        payload: (await provider.send("eth_requestAccounts"))[0],
-      })
-
-      if (chainId !== 4) {
-        dispatch({
-          type: "UPDATE_CHAIN_ID",
-          payload: await switchNetwork(provider.provider, chainId),
-        })
+      if (walletName === "metamask") {
+        _account = (await provider.send("eth_requestAccounts"))[0]
+        if (chainId !== _chainId) {
+          _chainId = await switchNetwork(provider.provider, chainId)
+        }
+      } else {
+        _account = (await wcProvider.enable())[0]
+        if (wcProvider.chainId !== _chainId) {
+          _account = null
+          wcProvider.disconnect()
+        }
       }
-
-      setIsModal(false)
     } catch (e) {}
+    dispatch({
+      type: "UPDATE_C_A",
+      payload: {
+        account: _account,
+        chainId: _chainId,
+      },
+    })
+    setIsModal(false)
   }
 
   const accountShorten =
@@ -136,7 +193,7 @@ const WalletButton = () => {
       {account ? (
         <button
           className={`inline-block py-4 px-8 text-mon font-bold ${styles.blurBtn}`}
-          onClick={handleDisconnect}
+          onClick={() => dispatch({ type: "DISCONNECT" })}
         >
           {accountShorten}
         </button>

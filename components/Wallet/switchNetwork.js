@@ -1,9 +1,8 @@
 import chainList from "./chainList"
 
-const supportChains = [4]
-const defaultChain = supportChains[0]
+const supportChain = process.env.NEXT_PUBLIC_SUPPORT_CHAIN
 
-async function switchNetwork(ethereum, prevChain, chain = defaultChain) {
+async function switchNetwork(ethereum, prevChain, chain = supportChain) {
   // 如果用戶拒絕換鏈，則回傳原本的鏈
   let _chain = prevChain
   try {

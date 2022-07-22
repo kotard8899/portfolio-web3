@@ -1,6 +1,6 @@
 import { useContext } from "react"
-import WalletStateContent from "./WalletStateContext"
+import { WalletStateContext, WalletDispatchContext } from "./WalletContext"
 
-const useWallet = () => useContext(WalletStateContent)
+export const useDispatchWallet = () => useContext(WalletDispatchContext)
 
-export default useWallet
+export const useWallet = () => useContext(WalletStateContext)

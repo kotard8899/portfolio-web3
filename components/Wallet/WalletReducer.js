@@ -8,6 +8,12 @@ const WalletReducer = (state, { type, payload }) => {
         account: payload.account,
         signer: payload.signer,
       }
+    case "UPDATE_C_A":
+      return {
+        ...state,
+        account: payload.account,
+        chainId: payload.chainId,
+      }
     case "UPDATE_CHAIN_ID":
       return {
         ...state,
