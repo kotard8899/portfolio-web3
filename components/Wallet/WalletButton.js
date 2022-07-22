@@ -112,13 +112,14 @@ const WalletList = ({ setIsModal, handleConnect, isMetaMaskInstalled }) => {
 const WalletButton = () => {
   const { account, provider, chainId } = useWallet()
   const dispatch = useDispatchWallet()
-  const [isMetaMaskInstalled, setIsMetaMaskInstalled] = useState(true)
+  const [isMetaMaskInstalled, setIsMetaMaskInstalled] = useState(false)
   const [isModal, setIsModal] = useState(false)
 
   useEffect(() => {
     ;(async () => {
       const provider = await detectEthereumProvider()
       if (provider) {
+        setIsMetaMaskInstalled(true)
         const etherProvider = new providers.Web3Provider(provider)
         const account = (await provider.request({ method: "eth_accounts" }))[0]
         const { chainId } = await etherProvider.getNetwork()
@@ -135,8 +136,6 @@ const WalletButton = () => {
             signer,
           },
         })
-      } else {
-        setIsMetaMaskInstalled(false)
       }
     })()
   }, [dispatch])
@@ -190,7 +189,6 @@ const WalletButton = () => {
 
   return (
     <>
-      {console.log(supportChain)}
       {account ? (
         <button
           className={`inline-block py-4 px-8 text-mon font-bold ${styles.blurBtn}`}
